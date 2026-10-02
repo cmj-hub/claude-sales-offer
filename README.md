@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/header.png" alt="Sales offer skill for Claude Code" width="100%">
+</p>
+
 # Sales offer skill for Claude Code
 
 **A sales offer is what the buyer gets, what it costs, and why now.**
@@ -7,6 +11,10 @@ You hold a leak, a prototype, and email one. The scorer refuses email one that s
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/claude-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![No paid APIs](https://img.shields.io/badge/paid%20APIs-none-success)
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="Sales offer skill — email one delivers the finding" width="100%">
+</p>
 
 The build guide teaches a human. This pack teaches an agent.
 
