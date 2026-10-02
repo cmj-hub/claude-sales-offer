@@ -1,14 +1,14 @@
-# Sales offer
+# Sales offer skill for Claude Code
 
-A sales offer is what the buyer gets, what it costs, and why now.
+**A sales offer is what the buyer gets, what it costs, and why now.**
 
 You hold a leak, a prototype, and email one. The scorer refuses email one that sells the paid product.
 
-A cold offer is the short trial you put in front of cold traffic, not the core retainer. Email one states that offer in words the reader understands. It delivers a finding the buyer did not request. The full report is theirs only if they want it. No meeting. No demo. No pitch.
+[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/claude-code)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![No paid APIs](https://img.shields.io/badge/paid%20APIs-none-success)
 
 The build guide teaches a human. This pack teaches an agent.
-
-Give the instrument. Sell the compounding.
 
 ## Install
 
@@ -16,7 +16,7 @@ Give the instrument. Sell the compounding.
 npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
 ```
 
-Works in Claude Code, Cursor, Codex, Grok, Copilot, Windsurf, Cline, OpenCode, and the rest of the skills CLI list.
+Installs into Claude Code, Cursor, Codex, Grok, Copilot, Windsurf, Cline, and OpenCode. The scorer is Python in this repo. It does not call a paid API.
 
 ## What you walk out with in 15 minutes
 
@@ -33,7 +33,25 @@ The good draft exits 0 and prints the leak, the prototype, and email one. The se
 
 It will not send the email. It does not book a meeting. It will not let email one sell the paid product.
 
-This pack drafts and scores. It will not pick this quarter's offer, ingest your CRM, or update when a sequencer changes its send window. That is the course and Operator Pass: the catalog that keeps moving, the tools that stay calibrated, the Friday room where you bring the artifact.
+## Does this send the offer?
+
+No. It scores the draft. You send it from your own sequencer.
+
+## What fails the score?
+
+Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
+
+## Companion packs
+
+- [claude-psp](https://github.com/cmj-hub/claude-psp) — Ideal customer profile
+- [claude-evp](https://github.com/cmj-hub/claude-evp) — Value proposition
+- [claude-cold-email](https://github.com/cmj-hub/claude-cold-email) — Cold email
+- [claude-founder-brand](https://github.com/cmj-hub/claude-founder-brand) — LinkedIn posts
+- [claude-pricing](https://github.com/cmj-hub/claude-pricing) — Pricing strategy
+- [claude-landing-page](https://github.com/cmj-hub/claude-landing-page) — Landing page
+- [claude-geo](https://github.com/cmj-hub/claude-geo) — Generative engine optimization
+- [claude-prospect-list](https://github.com/cmj-hub/claude-prospect-list) — Sales prospecting
+- [claude-email-sequence](https://github.com/cmj-hub/claude-email-sequence) — Email sequence
 
 ## License
 
