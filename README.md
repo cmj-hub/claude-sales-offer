@@ -1,4 +1,6 @@
-# Cold offer
+# Sales offer
+
+A sales offer is what the buyer gets, what it costs, and why now.
 
 You hold a leak, a prototype, and email one. The scorer refuses email one that sells the paid product.
 
@@ -11,7 +13,7 @@ Give the instrument. Sell the compounding.
 ## Install
 
 ```bash
-npx skills add cmj-hub/claude-cold-offer --all -g --full-depth
+npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
 ```
 
 Works in Claude Code, Cursor, Codex, Grok, Copilot, Windsurf, Cline, OpenCode, and the rest of the skills CLI list.
