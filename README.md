@@ -49,6 +49,17 @@ No. It scores the draft. You send it from your own sequencer.
 
 Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
 
+## On the site
+
+- [Sales offer pack](https://jaymountconsulting.com/skills/claude-sales-offer) — this pack's page
+- [Skill packs catalog](https://jaymountconsulting.com/skills) — install paths + every pack
+
+## Free, by email
+
+[**Growth Audit**](https://jaymountconsulting.com/growth-audit) — architecture gaps in the GTM you already run. Free written report.
+
+[**Friday Signal**](https://jaymountconsulting.com/newsletter/signal) — one Friday GTM read. No pitch in it.
+
 ## Companion packs
 
 - [claude-psp](https://github.com/cmj-hub/claude-psp) — Ideal customer profile
