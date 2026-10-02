@@ -1,22 +1,20 @@
 <p align="center">
-  <img src="./assets/header.png" alt="Sales offer skill for Claude Code" width="100%">
+  <img src="./assets/lockup.png" width="880" alt="Sales offer skill for Claude Code. A sales offer is what the buyer gets, what it costs, and why now.">
 </p>
 
 # Sales offer skill for Claude Code
 
-**A sales offer is what the buyer gets, what it costs, and why now.**
+A sales offer is what the buyer gets, what it costs, and why now.
 
-You hold a leak, a prototype, and email one. The scorer refuses email one that sells the paid product.
+The sample homepage asks for a meeting before it shows any work.
 
-[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/claude-code)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![No paid APIs](https://img.shields.io/badge/paid%20APIs-none-success)
+The good first email hands over that finding. The draft that says "buy the retainer" fails the score.
 
 <p align="center">
   <img src="./assets/demo.gif" alt="Sales offer skill — email one delivers the finding" width="100%">
 </p>
 
-The build guide teaches a human. This pack teaches an agent.
+The build guide teaches a human. The pack teaches an agent.
 
 ## Install
 
@@ -24,7 +22,13 @@ The build guide teaches a human. This pack teaches an agent.
 npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
 ```
 
-Installs into Claude Code, Cursor, Codex, Grok, Copilot, Windsurf, Cline, and OpenCode. The scorer is Python in this repo. It does not call a paid API.
+`--all` writes this pack for every host the installer knows. One host:
+
+```bash
+npx skills add cmj-hub/claude-sales-offer --skill '*' -g --full-depth -y -a claude-code
+```
+
+Swap `claude-code` for `cursor`, `codex`, `grok`, `github-copilot`, `windsurf`, `cline`, or `opencode`. The scorer is Python in this repo. It does not call a paid API.
 
 ## What you walk out with in 15 minutes
 
@@ -54,23 +58,21 @@ Email one that sells the paid product. The first email delivers the finding. The
 - [Sales offer pack](https://jaymountconsulting.com/skills/claude-sales-offer) — this pack's page
 - [Skill packs catalog](https://jaymountconsulting.com/skills) — install paths + every pack
 
+## Free, no signup
+
+[All free tools](https://jaymountconsulting.com/prototypes)
+
 ## Free, by email
 
 [**Growth Audit**](https://jaymountconsulting.com/growth-audit) — architecture gaps in the GTM you already run. Free written report.
 
 [**Friday Signal**](https://jaymountconsulting.com/newsletter/signal) — one Friday GTM read. No pitch in it.
 
-## Companion packs
+## Next
 
-- [claude-psp](https://github.com/cmj-hub/claude-psp) — Ideal customer profile
-- [claude-evp](https://github.com/cmj-hub/claude-evp) — Value proposition
-- [claude-cold-email](https://github.com/cmj-hub/claude-cold-email) — Cold email
-- [claude-founder-brand](https://github.com/cmj-hub/claude-founder-brand) — LinkedIn posts
-- [claude-pricing](https://github.com/cmj-hub/claude-pricing) — Pricing strategy
-- [claude-landing-page](https://github.com/cmj-hub/claude-landing-page) — Landing page
-- [claude-geo](https://github.com/cmj-hub/claude-geo) — Generative engine optimization
-- [claude-prospect-list](https://github.com/cmj-hub/claude-prospect-list) — Sales prospecting
-- [claude-email-sequence](https://github.com/cmj-hub/claude-email-sequence) — Email sequence
+Previous: [Pricing strategy](https://github.com/cmj-hub/claude-pricing)
+
+Next: [Landing page](https://github.com/cmj-hub/claude-landing-page)
 
 ## License
 
