@@ -1,6 +1,6 @@
 {
   "name": "sales-offer",
-  "icon": "icon.png",
+  "icon": ".claude-plugin/icon.png",
   "version": "0.3.0",
   "description": "A sales offer is what the buyer gets, what it costs, and why now.",
   "author": {
