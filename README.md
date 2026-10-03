@@ -16,19 +16,7 @@ The good first email hands over that finding. The draft that says "buy the retai
 
 The build guide teaches a human. The pack teaches an agent.
 
-## Install
-
-```bash
-npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
-```
-
-`--all` writes this pack for every host the installer knows. One host:
-
-```bash
-npx skills add cmj-hub/claude-sales-offer --skill '*' -g --full-depth -y -a claude-code
-```
-
-Swap `claude-code` for `cursor`, `codex`, `grok`, `github-copilot`, `windsurf`, `cline`, or `opencode`. The scorer is Python in this repo. It does not call a paid API.
+The scorer is Python in this repo. It does not call a paid API. Host paths are on the [Skill packs catalog](https://jaymountconsulting.com/skills).
 
 ## What you walk out with in 15 minutes
 
