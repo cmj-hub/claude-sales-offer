@@ -18,6 +18,21 @@ The build guide teaches a human. The pack teaches an agent.
 
 The scorer is Python in this repo. It does not call a paid API. Host paths are on the [Skill packs catalog](https://jaymountconsulting.com/skills).
 
+## Install
+
+Claude Code:
+
+```text
+/plugin marketplace add cmj-hub/gtm-operator-skills
+/plugin install sales-offer@gtm-operator-skills
+```
+
+Other agents:
+
+```text
+npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
+```
+
 ## What you walk out with in 15 minutes
 
 Artifact: `skills/cold-offer/examples/offer-good.json`.
