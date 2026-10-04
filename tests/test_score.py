@@ -84,5 +84,76 @@ class ScoreColdOffer(unittest.TestCase):
         self.assertIn("JSON must be an object", array.stderr)
 
 
+def checks_for(draft, *extra):
+    result = run(["--stdin", "--json", *extra], stdin=json.dumps(draft))
+    return result.returncode, [f["check"] for f in json.loads(result.stdout)["failures"]]
+
+
+SCOPED = json.loads((SKILL / "examples" / "offer-scoped.json").read_text())
+
+
+class ScoreOfferFields(unittest.TestCase):
+    def test_scoped_example_passes(self):
+        result = run(["--file", str(SKILL / "examples" / "offer-scoped.json"), "--today", "2026-10-04"])
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("scope: One page that rewrites the homepage hero", result.stdout)
+        self.assertIn("deadline: 2026-12-15", result.stdout)
+
+    def test_scoped_refused_example_names_each_check(self):
+        result = run(["--file", str(SKILL / "examples" / "offer-scoped-refused.json"), "--json"])
+        self.assertEqual(result.returncode, 1)
+        checks = [f["check"] for f in json.loads(result.stdout)["failures"]]
+        self.assertEqual(checks, ["offer_sells", "scope", "deadline"])
+
+    def test_leak_or_prototype_that_sells_fails(self):
+        for name, text in (
+            ("leak", "The homepage hides our pricing below the fold."),
+            ("prototype", "A trial of the retainer, one page long."),
+        ):
+            code, checks = checks_for(dict(SCOPED, **{name: text}))
+            self.assertEqual(code, 1, name)
+            self.assertIn("offer_sells", checks, name)
+
+    def test_offer_sells_detail_names_field(self):
+        result = run(["--stdin"], stdin=json.dumps(dict(SCOPED, scope="One page, then the retainer.")))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("the offer sells the paid product (scope: retainer)", result.stdout)
+
+    def test_scope_names_one_deliverable(self):
+        for scope, ok in (
+            ("One page.", True),
+            ("A single worked slice of the onboarding fix, delivered as a doc, and nothing more.", True),
+            ("A rewritten homepage hero", True),
+            ("Audit, rewrite, and ad plan", False),
+            ("A rewritten homepage hero section with new copy for every block on the page", False),
+        ):
+            code, checks = checks_for(dict(SCOPED, scope=scope))
+            self.assertEqual(code == 0, ok, scope)
+            self.assertEqual("scope" in checks, not ok, scope)
+
+    def test_deadline_must_be_iso_date(self):
+        for deadline in ("2026-02-30", "Dec 15", "2026-12-15T09:00", "15/12/2026"):
+            code, checks = checks_for(dict(SCOPED, deadline=deadline))
+            self.assertEqual((code, checks), (1, ["deadline"]), deadline)
+
+    def test_deadline_against_today(self):
+        self.assertEqual(checks_for(SCOPED, "--today", "2026-12-15"), (0, []))
+        self.assertEqual(checks_for(SCOPED, "--today", "2026-12-16"), (1, ["deadline"]))
+        self.assertEqual(checks_for(SCOPED), (0, []))
+
+    def test_bad_today_exits_2(self):
+        result = run(["--stdin", "--today", "tomorrow"], stdin=json.dumps(SCOPED))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("--today must be a YYYY-MM-DD date", result.stderr)
+
+    def test_present_but_empty_optional_is_incomplete(self):
+        result = run(["--stdin"], stdin=json.dumps(dict(SCOPED, scope="  ")))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("draft is incomplete (missing scope)", result.stdout)
+
+    def test_null_optional_fields_are_ignored(self):
+        self.assertEqual(checks_for(dict(SCOPED, scope=None, deadline=None)), (0, []))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,10 @@ Stdlib only. No network. Does not send.
   python3 scripts/score.py --file draft.json
   python3 scripts/score.py --stdin
   python3 scripts/score.py --file draft.json --json
+  python3 scripts/score.py --file draft.json --today 2026-10-04
+
+Optional fields: `scope` (one deliverable) and `deadline` (YYYY-MM-DD; with
+--today, not before it).
 
 Exit 0 when every check passes, 1 when a check fails, 2 on bad input.
 """
@@ -16,12 +20,20 @@ import argparse
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 
 MAX_INPUT_BYTES = 2_000_000
 MAX_EMAIL_WORDS = 120
 FIELDS = ("leak", "prototype", "email_one")
+# Optional. Scored only when the key is present and not null.
+OPTIONAL = ("scope", "deadline")
+MAX_SCOPE_WORDS = 12
+ISO_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+ONE_RE = re.compile(r"\b(?:one|single)\b", re.IGNORECASE)
+# A list of deliverables: a comma, semicolon, plus, ampersand, or "and".
+LIST_RE = re.compile(r"[,;+&]|\band\b", re.IGNORECASE)
 
 # Email one sells the paid product when it asks the reader to buy it.
 SELL_RE = re.compile(
@@ -122,8 +134,29 @@ def matches(pattern: re.Pattern[str], text: str) -> list[str]:
     return found
 
 
-def check(draft: dict[str, str]) -> list[dict[str, str]]:
-    """Return one failure per broken rule, most serious first."""
+def parse_iso_date(value: str) -> date | None:
+    """Return the date for a strict YYYY-MM-DD string, else None."""
+    if not ISO_DATE_RE.fullmatch(value):
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def names_one_deliverable(scope: str) -> bool:
+    """Says one (or single), or is a short phrase with no list in it."""
+    if ONE_RE.search(scope):
+        return True
+    return len(scope.split()) <= MAX_SCOPE_WORDS and not LIST_RE.search(scope)
+
+
+def check(draft: dict[str, str], today: date | None = None) -> list[dict[str, str]]:
+    """Return one failure per broken rule, most serious first.
+
+    `scope` and `deadline` are checked only when the draft carries them.
+    `today`, when given, makes a deadline before it fail.
+    """
     failures = []
     email_one = draft["email_one"]
 
@@ -136,6 +169,18 @@ def check(draft: dict[str, str]) -> list[dict[str, str]]:
             "fix": "Cut the ask to buy. Offer the full report only if they want it.",
         })
 
+    offer_sold = []
+    for name in ("leak", "prototype", "scope"):
+        found = matches(SELL_RE, draft.get(name, ""))
+        offer_sold.extend(f"{name}: {phrase}" for phrase in found)
+    if offer_sold:
+        failures.append({
+            "check": "offer_sells",
+            "message": "the offer sells the paid product",
+            "detail": ", ".join(offer_sold),
+            "fix": "The leak and the prototype are free work. Cut the paid product out of them.",
+        })
+
     asked = matches(MEETING_RE, email_one)
     if asked:
         failures.append({
@@ -145,13 +190,13 @@ def check(draft: dict[str, str]) -> list[dict[str, str]]:
             "fix": "Cut the meeting ask. Hand over the finding and stop.",
         })
 
-    missing = [name for name in FIELDS if not draft[name]]
+    missing = [name for name in FIELDS + OPTIONAL if name in draft and not draft[name]]
     if missing:
         failures.append({
             "check": "complete",
             "message": "draft is incomplete",
             "detail": "missing " + ", ".join(missing),
-            "fix": "Fill leak, prototype, and email_one with non-empty strings.",
+            "fix": "Fill leak, prototype, and email_one with non-empty strings. Fill scope and deadline or leave them out.",
         })
         return failures
 
@@ -175,6 +220,31 @@ def check(draft: dict[str, str]) -> list[dict[str, str]]:
             "fix": "Cut to the finding, the prototype, and the offer of the report.",
         })
 
+    if "scope" in draft and not names_one_deliverable(draft["scope"]):
+        failures.append({
+            "check": "scope",
+            "message": "scope does not name one deliverable",
+            "detail": f"no 'one', and a list or over {MAX_SCOPE_WORDS} words",
+            "fix": "Name the one thing they get: one page, one sample, one worked slice.",
+        })
+
+    if "deadline" in draft:
+        due = parse_iso_date(draft["deadline"])
+        if due is None:
+            failures.append({
+                "check": "deadline",
+                "message": "deadline is not a date",
+                "detail": "use YYYY-MM-DD",
+                "fix": "Write the deadline as a real calendar date, for example 2026-12-15.",
+            })
+        elif today is not None and due < today:
+            failures.append({
+                "check": "deadline",
+                "message": "deadline is in the past",
+                "detail": f"before {today.isoformat()}",
+                "fix": "Set a deadline on or after today, or leave it out.",
+            })
+
     return failures
 
 
@@ -183,13 +253,22 @@ def main() -> int:
     parser.add_argument("--file", help="Path to a JSON object")
     parser.add_argument("--stdin", action="store_true", help="Read a JSON object from stdin")
     parser.add_argument("--json", action="store_true", help="Print the result as JSON")
+    parser.add_argument("--today", help="YYYY-MM-DD; a deadline before it fails")
     args = parser.parse_args()
+    today = None
+    if args.today is not None:
+        today = parse_iso_date(args.today.strip())
+        if today is None:
+            fail_input("--today must be a YYYY-MM-DD date")
     data = load_payload(args)
     if not isinstance(data, dict):
         fail_input("JSON must be an object")
 
     draft = {name: nonempty_text(data.get(name)) for name in FIELDS}
-    failures = check(draft)
+    for name in OPTIONAL:
+        if data.get(name) is not None:
+            draft[name] = nonempty_text(data.get(name))
+    failures = check(draft, today)
 
     if args.json:
         print(json.dumps({"pass": not failures, "failures": failures}, indent=2))
@@ -203,6 +282,9 @@ def main() -> int:
 
     print(f"leak: {draft['leak']}")
     print(f"prototype: {draft['prototype']}")
+    for name in OPTIONAL:
+        if name in draft:
+            print(f"{name}: {draft[name]}")
     print(f"email one: {draft['email_one']}")
     return 0
 
