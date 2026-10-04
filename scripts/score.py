@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Score a cold offer: a leak, a prototype, and email one.
+"""Score a cold offer: a leak, a prototype, a price, a scope, a deadline, and email one.
+
+Email one may not sell the paid product. A number in the price must be labeled
+example. Scope must name one bound. Deadline must be YYYY-MM-DD.
 
 Stdlib only. No network. Does not send.
 
@@ -13,6 +16,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 
@@ -21,6 +25,7 @@ MAX_INPUT_BYTES = 2_000_000
 # Email one sells the paid product when it asks the reader to buy it.
 SELL_RE = re.compile(
     r"paid product|retainer|\bbook a demo\b|\bschedule a demo\b|"
+    r"\bbook a meeting\b|\bschedule a call\b|"
     r"\bbuy (?:the|our)\b|\bpurchase\b|\bsubscribe\b|our pricing|"
     r"\bcheckout\b|core service|\bupsell\b|sign up for",
     re.IGNORECASE,
@@ -84,6 +89,17 @@ def sells_paid_product(email_one: str) -> bool:
     return SELL_RE.search(email_one) is not None
 
 
+
+def is_iso_date(value: str) -> bool:
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return False
+    try:
+        datetime.strptime(value, "%Y-%m-%d")
+    except ValueError:
+        return False
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score a cold offer draft")
     parser.add_argument("--file", help="Path to a JSON object")
@@ -97,16 +113,35 @@ def main() -> int:
     prototype = nonempty_text(data.get("prototype"))
     email_one = nonempty_text(data.get("email_one"))
 
+    price = nonempty_text(data.get("price"))
+    scope = nonempty_text(data.get("scope"))
+    deadline = nonempty_text(data.get("deadline"))
+
     if sells_paid_product(email_one):
         print("email one that sells the paid product")
         return 1
+    if any(sells_paid_product(part) for part in (leak, prototype, price, scope)):
+        print("the offer sells the paid product")
+        return 1
 
-    if not leak or not prototype or not email_one:
+    if not leak or not prototype or not email_one or not price or not scope or not deadline:
         print("draft is incomplete")
+        return 1
+    if re.search(r"[\d$€£]", price) and "example" not in price.lower():
+        print("price is not labeled example")
+        return 1
+    if not re.search(r"\bone\b", scope, re.IGNORECASE):
+        print("scope is not one bound")
+        return 1
+    if not is_iso_date(deadline):
+        print("deadline is not a date")
         return 1
 
     print(f"leak: {leak}")
     print(f"prototype: {prototype}")
+    print(f"price: {price}")
+    print(f"scope: {scope}")
+    print(f"deadline: {deadline}")
     print(f"email one: {email_one}")
     return 0
 

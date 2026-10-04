@@ -1,5 +1,8 @@
 {
   "leak": "The homepage asks for a meeting before it shows any work.",
   "prototype": "A one-page sample that leads with one finding and the short trial, and stops there.",
+  "price": "Example price, replace this before you send: 0 for the one-page sample.",
+  "scope": "One page. One finding. The short trial stops there.",
+  "deadline": "2026-12-15",
   "email_one": "Your homepage asks for a meeting before it shows any work. I wrote one page that leads with that finding. The full report is yours if you want it."
 }

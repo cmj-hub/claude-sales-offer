@@ -27,7 +27,7 @@ python3 scripts/score.py --file examples/offer-good.json
 python3 scripts/score.py --file examples/offer-sells.json
 ```
 
-The good draft exits 0 and prints the leak, the prototype, and email one. The sell draft exits 1. Then drop in yours.
+The good draft exits 0 and prints the leak, the prototype, the price, the scope, the deadline, and email one. The sell draft exits 1. Then drop in yours.
 
 ## What this pack will not do
 
@@ -39,7 +39,7 @@ No. It scores the draft. You send it from your own sequencer.
 
 ## What fails the score?
 
-Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
+Email one that sells the paid product. A draft with no price, no scope, or no deadline also fails. The first email delivers the finding. The paid product stays behind a yes.
 
 ## On the site
 
