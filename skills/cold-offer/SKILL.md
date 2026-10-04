@@ -1,6 +1,7 @@
 ---
 name: cold-offer
 description: "Draft a give-first cold offer: a leak (one finding the buyer did not ask for), a prototype (a short trial of the fix), and email one that hands both over without selling. Use when the user asks for a give-first or value-first first touch, a cold offer, or a first email that must not pitch the paid product or ask for a meeting. Not for a standard signal-anchored cold email or follow-up sequence (use cold-email). Scores the draft with a local script; never sends."
+allowed-tools: Read Write Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/score.py:*)
 models: ""
 ---
 
@@ -13,6 +14,13 @@ A cold offer is not the main service. Email one hands over work already done: a 
 1. Leak. The finding, in words the reader already uses. One concrete miss on their public page or product. They did not ask for it.
 2. Prototype. The short trial. One page, one sample, or one worked slice of the fix. It shows the system works. It is not the core retainer.
 3. Email one. States that offer in words the reader understands. It delivers the finding. It names the prototype. It offers the full report only if they want it.
+
+Two optional fields, scored only when present:
+
+- `scope`. The one deliverable the prototype is: "One page that rewrites the hero." Say "one", or keep it to a short phrase with no list.
+- `deadline`. When the prototype lands, as `YYYY-MM-DD`. Pass `--today YYYY-MM-DD` and a deadline before it fails.
+
+Price is not part of this draft. If the user wants a price on the paid follow-on, take it from the pricing pack (`/pricing:pricing`, `pricing` in `brand-config.json`); do not invent one. The scorer does not check it.
 
 ## Inputs
 
@@ -30,8 +38,8 @@ If the user gave a URL and the page can be read, find the leak there. Do not inv
 Copy this list and tick it in order.
 
 - [ ] 1. Choose one finding the buyer did not request. One, not a list.
-- [ ] 2. Fill the shell below: `leak`, `prototype`, `email_one`. Write it to a scratch file, not the user's repo.
-- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file draft.json --json`.
+- [ ] 2. Fill the shell below: `leak`, `prototype`, `email_one`, plus `scope` and `deadline` if you have them. Write it to a scratch file, not the user's repo.
+- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file draft.json --json --today YYYY-MM-DD` with today's date.
 - [ ] 4. If it exits 1, apply each `fix` and go back to step 2. Repeat until it exits 0.
 - [ ] 5. Show the user the leak, the prototype, and email one. Do not send it.
 
@@ -42,10 +50,13 @@ Exit codes: `0` pass, `1` a check failed, `2` bad input (missing file, broken JS
 | Check | Fails when | Fix |
 | --- | --- | --- |
 | `sells` | Email one asks the reader to buy, book, or start the paid thing: retainer, demo, purchase, subscribe, checkout, plans, or pricing of the core service. | Cut the ask. Offer the full report only if they want it. |
+| `offer_sells` | The leak, prototype, or scope names the paid thing: retainer, demo, pricing, subscribe. | The leak and prototype are free work. Cut the paid product out. |
 | `meeting` | Email one asks for time: book a call, quick chat, 15-minute call, calendar link. Mentioning a meeting is fine; asking for one is not. | Hand over the finding and stop. |
-| `complete` | `leak`, `prototype`, or `email_one` is missing or empty. | Fill all three with non-empty strings. |
+| `complete` | `leak`, `prototype`, or `email_one` is missing or empty, or `scope` / `deadline` is present but empty. | Fill all three with non-empty strings. Fill or drop the optional ones. |
 | `finding` | Email one shares too few key words with the leak, so it does not deliver the finding. | State the leak in email one, in the reader's words. |
 | `length` | Email one is over 120 words. | Cut to the finding, the prototype, and the offer of the report. |
+| `scope` | `scope` has no "one" or "single", and lists items or runs over 12 words. | Name the one thing they get. |
+| `deadline` | `deadline` is not a real `YYYY-MM-DD` date, or is before `--today`. | Write a real date on or after today. |
 
 The output names the phrase that tripped each check. A false positive (for example, "no retainer") is still worth rewording: the reader skims the same way the regex does.
 
@@ -78,6 +89,8 @@ If a companion pack is not installed, name it and its install line (`/plugin ins
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-good.json    # exits 0, prints the three parts
 python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-sells.json   # exits 1, names "retainer", "book a demo"
+python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-scoped.json  # exits 0, adds scope and deadline
+python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-scoped-refused.json  # exits 1: offer_sells, scope, deadline
 ```
 
 Python 3 standard library only. No network. No send.

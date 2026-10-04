@@ -57,7 +57,7 @@ No. It scores the draft. You send it from your own sequencer.
 
 Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
 
-The scorer also fails email one that asks for a meeting, that never states the finding, or that runs past 120 words. Each failure names the phrase that tripped it and the fix.
+The scorer also fails email one that asks for a meeting, that never states the finding, or that runs past 120 words. A leak or prototype that sells the paid product fails too. Optional `scope` must name one deliverable, and optional `deadline` must be a real `YYYY-MM-DD` date (not before `--today`, when given). Each failure names the phrase that tripped it and the fix.
 
 ## Layout
 
@@ -65,7 +65,7 @@ The scorer also fails email one that asks for a meeting, that never states the f
 .claude-plugin/plugin.json      plugin manifest
 skills/cold-offer/SKILL.md      the skill the agent loads
 skills/cold-offer/scripts/      score.py
-skills/cold-offer/examples/     good and sell drafts
+skills/cold-offer/examples/     good, sell, and scoped drafts
 tests/                          python3 -m unittest discover -s tests
 ```
 
@@ -89,6 +89,10 @@ tests/                          python3 -m unittest discover -s tests
 Previous: [Pricing strategy](https://github.com/cmj-hub/claude-pricing)
 
 Next: [Landing page](https://github.com/cmj-hub/claude-landing-page)
+
+## Privacy and security
+
+The scorer is local Python 3 standard library and reads only the draft JSON you pass it. No script opens a network connection. The skill reads `brand-config.json` if present and writes only a scratch draft; the agent reads the buyer's public page only when you give it a URL. No telemetry, no credentials, and nothing is sent. See [SECURITY.md](SECURITY.md).
 
 ## License
 
