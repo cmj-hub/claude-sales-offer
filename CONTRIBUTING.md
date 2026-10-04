@@ -47,7 +47,7 @@ python3 skills/cold-offer/scripts/score.py --file skills/cold-offer/examples/off
 
 - [ ] `python3 -m unittest discover -s tests` passes
 - [ ] A scorer change comes with a test for the case it fixes
-- [ ] If you change a check, update the table in `SKILL.md`
+- [ ] If you change a check, update the table in `skills/cold-offer/SKILL.md`
 - [ ] Skill name stays lowercase with hyphens and matches its directory
 - [ ] Bump `version` in `.claude-plugin/plugin.json`
 - [ ] No new dependencies (pip packages, npm packages, API keys, paid

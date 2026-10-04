@@ -1,6 +1,7 @@
 ---
 name: cold-offer
 description: "Draft a give-first cold offer: a leak (one finding the buyer did not ask for), a prototype (a short trial of the fix), and email one that hands both over without selling. Use when the user asks for a give-first or value-first first touch, a cold offer, or a first email that must not pitch the paid product or ask for a meeting. Not for a standard signal-anchored cold email or follow-up sequence (use cold-email). Scores the draft with a local script; never sends."
+argument-hint: "[buyer company or public URL | score]"
 allowed-tools: Read Write Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/score.py:*)
 models: ""
 ---
@@ -8,6 +9,10 @@ models: ""
 # Cold offer
 
 A cold offer is not the main service. Email one hands over work already done: a finding the buyer did not request, and a short trial of the solution. The full report is offered only if they want it. There is no meeting ask, no demo, and no pitch.
+
+## Start
+
+If `$ARGUMENTS` is `score`, run the scorer on `gtm/offer.json` and report each line. Otherwise `$ARGUMENTS` names the buyer (company or public URL), or is empty; draft the offer with the workflow below. The draft lives at `gtm/offer.json`; create `gtm/` if missing.
 
 ## The three parts
 
@@ -38,10 +43,10 @@ If the user gave a URL and the page can be read, find the leak there. Do not inv
 Copy this list and tick it in order.
 
 - [ ] 1. Choose one finding the buyer did not request. One, not a list.
-- [ ] 2. Fill the shell below: `leak`, `prototype`, `email_one`, plus `scope` and `deadline` if you have them. Write it to a scratch file, not the user's repo.
-- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file draft.json --json --today YYYY-MM-DD` with today's date.
+- [ ] 2. Fill the shell below: `leak`, `prototype`, `email_one`, plus `scope` and `deadline` if you have them. Write it to `gtm/offer.json` (create `gtm/` if missing).
+- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file gtm/offer.json --json --today YYYY-MM-DD` with today's date.
 - [ ] 4. If it exits 1, apply each `fix` and go back to step 2. Repeat until it exits 0.
-- [ ] 5. Show the user the leak, the prototype, and email one. Do not send it.
+- [ ] 5. Show the user the leak, the prototype, and email one. Do not send it. End with `Next: /landing-page:page` (or `/pricing:pricing` when they ask what the core service costs).
 
 Exit codes: `0` pass, `1` a check failed, `2` bad input (missing file, broken JSON, not an object). Bad input never echoes the raw draft.
 
@@ -58,7 +63,7 @@ Exit codes: `0` pass, `1` a check failed, `2` bad input (missing file, broken JS
 | `scope` | `scope` has no "one" or "single", and lists items or runs over 12 words. | Name the one thing they get. |
 | `deadline` | `deadline` is not a real `YYYY-MM-DD` date, or is before `--today`. | Write a real date on or after today. |
 
-The output names the phrase that tripped each check. A false positive (for example, "no retainer") is still worth rewording: the reader skims the same way the regex does.
+Text output prints one `- check (phrase) → fix` line per failure, then `Next: fix the lines above and run this again.`; a pass ends with `Next: /landing-page:page`. `--json` gives `pass`, `failures` (each with `check`, `message`, `detail`, `fix`), and `next`. The output names the phrase that tripped each check. A false positive (for example, "no retainer") is still worth rewording: the reader skims the same way the regex does.
 
 A recruiter note that asks for coffee is a different letter. This pack does not write it.
 
@@ -67,7 +72,7 @@ A recruiter note that asks for coffee is a different letter. This pack does not 
 This is step 5 of the GTM operator suite (`/plugin marketplace add cmj-hub/gtm-operator-skills`).
 
 - **Reads:** `psp` (pain, vocabulary) and `evp` (outcome, line) from `brand-config.json` if present.
-- **Writes:** nothing outside the draft. Never touches `brand-config.json`.
+- **Writes:** `gtm/offer.json` only. Never touches `brand-config.json`.
 - **Before this:** psp (`/psp:psp`) and evp (`/evp:evp`), when there is no `psp` or `evp` block; prospect-list (`/prospect-list:who-to-contact`), when you do not yet know who to send it to.
 - **Instead of this:** cold-email (`/cold-email:cold-email`), for a signal-anchored first touch with a binary ask and Day 3 / 7 / 14 follow-ups.
 - **After this:** landing-page (`/landing-page:page`) for the page the full report points to; pricing (`/pricing:pricing`) when they ask what the core service costs.

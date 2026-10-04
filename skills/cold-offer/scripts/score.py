@@ -3,13 +3,16 @@
 
 Stdlib only. No network. Does not send.
 
-  python3 scripts/score.py --file draft.json
+  python3 scripts/score.py --file gtm/offer.json
   python3 scripts/score.py --stdin
-  python3 scripts/score.py --file draft.json --json
-  python3 scripts/score.py --file draft.json --today 2026-10-04
+  python3 scripts/score.py --file gtm/offer.json --json
+  python3 scripts/score.py --file gtm/offer.json --today 2026-10-04
 
 Optional fields: `scope` (one deliverable) and `deadline` (YYYY-MM-DD; with
 --today, not before it).
+
+Each failing line reads `- <what is wrong> (<detail>) -> <what to change>`; the
+last line names the next step.
 
 Exit 0 when every check passes, 1 when a check fails, 2 on bad input.
 """
@@ -248,13 +251,25 @@ def check(draft: dict[str, str], today: date | None = None) -> list[dict[str, st
     return failures
 
 
+NEXT_PASS = "/landing-page:page"
+NEXT_FAIL = "fix the lines above and run this again."
+EXAMPLE = "example:\n  python3 scripts/score.py --file examples/offer-good.json --today 2026-10-04"
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Score a cold offer draft")
-    parser.add_argument("--file", help="Path to a JSON object")
+    parser = argparse.ArgumentParser(
+        description="Score a cold offer draft",
+        epilog=EXAMPLE,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--file", help="Path to a JSON object (gtm/offer.json)")
+    parser.add_argument("--input", dest="file", help=argparse.SUPPRESS)
     parser.add_argument("--stdin", action="store_true", help="Read a JSON object from stdin")
-    parser.add_argument("--json", action="store_true", help="Print the result as JSON")
+    parser.add_argument("--json", action="store_true", help="Print the result as one JSON object")
     parser.add_argument("--today", help="YYYY-MM-DD; a deadline before it fails")
     args = parser.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
     today = None
     if args.today is not None:
         today = parse_iso_date(args.today.strip())
@@ -269,15 +284,16 @@ def main() -> int:
         if data.get(name) is not None:
             draft[name] = nonempty_text(data.get(name))
     failures = check(draft, today)
+    step = NEXT_FAIL if failures else NEXT_PASS
 
     if args.json:
-        print(json.dumps({"pass": not failures, "failures": failures}, indent=2))
+        print(json.dumps({"pass": not failures, "failures": failures, "next": step}, indent=2))
         return 1 if failures else 0
 
     if failures:
         for failure in failures:
-            print(f"{failure['message']} ({failure['detail']})")
-            print(f"  fix: {failure['fix']}")
+            print(f"- {failure['message']} ({failure['detail']}) → {failure['fix']}")
+        print(f"Next: {step}")
         return 1
 
     print(f"leak: {draft['leak']}")
@@ -286,6 +302,7 @@ def main() -> int:
         if name in draft:
             print(f"{name}: {draft[name]}")
     print(f"email one: {draft['email_one']}")
+    print(f"Next: {step}")
     return 0
 
 
