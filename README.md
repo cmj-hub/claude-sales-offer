@@ -6,6 +6,23 @@
 
 A sales offer is what the buyer gets, what it costs, and why now.
 
+## In 60 seconds
+
+```text
+/plugin marketplace add cmj-hub/gtm-operator-skills
+/plugin install sales-offer@gtm-operator-skills
+/sales-offer:cold-offer
+```
+
+Or score the sample without an agent:
+
+```bash
+python3 skills/cold-offer/scripts/score.py --file skills/cold-offer/examples/offer-good.json    # exit 0, prints leak, prototype, email one, then "Next: /landing-page:page"
+python3 skills/cold-offer/scripts/score.py --file skills/cold-offer/examples/offer-sells.json   # exit 1: - email one that sells the paid product (buy the, retainer, book a demo, our pricing) → Cut the ask to buy. Offer the full report only if they want it.
+```
+
+Part of the GTM operator suite — `/plugin install gtm@gtm-operator-skills` installs all ten.
+
 The sample homepage asks for a meeting before it shows any work.
 
 The good first email hands over that finding. The draft that says "buy the retainer" fails the score.
@@ -20,12 +37,7 @@ The scorer is Python in this repo. It does not call a paid API. Host paths are o
 
 ## Install
 
-Claude Code:
-
-```text
-/plugin marketplace add cmj-hub/gtm-operator-skills
-/plugin install sales-offer@gtm-operator-skills
-```
+Claude Code: the two lines above. The command is `/sales-offer:cold-offer`; `/sales-offer:cold-offer score` scores the draft already in `gtm/offer.json`.
 
 Other agents:
 
@@ -43,7 +55,7 @@ python3 scripts/score.py --file examples/offer-good.json
 python3 scripts/score.py --file examples/offer-sells.json
 ```
 
-The good draft exits 0 and prints the leak, the prototype, and email one. The sell draft exits 1 and names the phrases that sold. Then drop in yours. Add `--json` for a machine-readable result.
+The good draft exits 0 and prints the leak, the prototype, email one, and the next step. The sell draft exits 1 and prints one `- what is wrong (phrase) → what to change` line per failure. Then drop in yours at `gtm/offer.json` in your project. Add `--json` for one result object (`pass`, `failures` with a `fix` each, `next`).
 
 ## What this pack will not do
 
@@ -92,7 +104,7 @@ Next: [Landing page](https://github.com/cmj-hub/claude-landing-page)
 
 ## Privacy and security
 
-The scorer is local Python 3 standard library and reads only the draft JSON you pass it. No script opens a network connection. The skill reads `brand-config.json` if present and writes only a scratch draft; the agent reads the buyer's public page only when you give it a URL. No telemetry, no credentials, and nothing is sent. See [SECURITY.md](SECURITY.md).
+The scorer is local Python 3 standard library and reads only the draft JSON you pass it. No script opens a network connection. The skill reads `brand-config.json` if present and writes only the draft, `gtm/offer.json`; the agent reads the buyer's public page only when you give it a URL. No telemetry, no credentials, and nothing is sent. See [SECURITY.md](SECURITY.md).
 
 ## License
 

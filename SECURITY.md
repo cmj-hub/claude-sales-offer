@@ -5,7 +5,7 @@
 - One script runs: `skills/cold-offer/scripts/score.py`, Python 3 standard library only, on your machine.
 - The script reads only the draft JSON you pass with `--file` or `--stdin`. It caps input at 2 MB and does not echo bad input.
 - The skill reads `brand-config.json` at your project root, if present, for `psp` and `evp`. It never writes to it or to `SOUL.md`.
-- The skill writes one scratch file: the draft (`draft.json`). Nothing else is created.
+- The skill writes one file in your project: the draft (`gtm/offer.json`). Nothing else is created.
 - Network: None. No script opens a network connection. When you give the agent a buyer's URL, the agent may read that public page with its own web tool to find the leak; the pack declares no network tool.
 - No telemetry. No credentials are asked for or stored.
 - Nothing is sent, posted, or published. You send the email from your own sequencer; this pack only scores the draft.

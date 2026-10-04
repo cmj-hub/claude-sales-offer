@@ -44,7 +44,8 @@ class ScoreColdOffer(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("email one that sells the paid product", result.stdout)
         self.assertIn("retainer", result.stdout)
-        self.assertIn("fix:", result.stdout)
+        self.assertIn(" \u2192 ", result.stdout)
+        self.assertEqual(result.stdout.strip().splitlines()[-1], "Next: fix the lines above and run this again.")
         self.assertNotIn("leak:", result.stdout)
 
     def test_meeting_ask_fails(self):
@@ -153,6 +154,26 @@ class ScoreOfferFields(unittest.TestCase):
 
     def test_null_optional_fields_are_ignored(self):
         self.assertEqual(checks_for(dict(SCOPED, scope=None, deadline=None)), (0, []))
+
+
+class CliConvention(unittest.TestCase):
+    def test_every_failure_line_says_what_to_change(self):
+        result = run(["--file", str(SKILL / "examples" / "offer-scoped-refused.json"), "--today", "2026-10-04"])
+        self.assertEqual(result.returncode, 1)
+        lines = result.stdout.strip().splitlines()
+        for line in lines[:-1]:
+            self.assertRegex(line, r"^- .+ \u2192 .+")
+        self.assertEqual(lines[-1], "Next: fix the lines above and run this again.")
+
+    def test_pass_names_next_step(self):
+        result = run(["--file", str(SKILL / "examples" / "offer-good.json")])
+        self.assertEqual(result.stdout.strip().splitlines()[-1], "Next: /landing-page:page")
+        report = json.loads(run(["--file", str(SKILL / "examples" / "offer-good.json"), "--json"]).stdout)
+        self.assertEqual(report["next"], "/landing-page:page")
+
+    def test_help_and_input_alias(self):
+        self.assertIn("examples/offer-good.json", run(["--help"]).stdout)
+        self.assertEqual(run(["--input", str(SKILL / "examples" / "offer-good.json")]).returncode, 0)
 
 
 if __name__ == "__main__":
