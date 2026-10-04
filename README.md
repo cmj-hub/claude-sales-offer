@@ -20,14 +20,15 @@ The scorer is Python in this repo. It does not call a paid API. Host paths are o
 
 ## What you walk out with in 15 minutes
 
-Artifact: `examples/offer-good.json`.
+Artifact: `skills/cold-offer/examples/offer-good.json`.
 
 ```bash
+cd skills/cold-offer
 python3 scripts/score.py --file examples/offer-good.json
 python3 scripts/score.py --file examples/offer-sells.json
 ```
 
-The good draft exits 0 and prints the leak, the prototype, and email one. The sell draft exits 1. Then drop in yours.
+The good draft exits 0 and prints the leak, the prototype, and email one. The sell draft exits 1 and names the phrases that sold. Then drop in yours. Add `--json` for a machine-readable result.
 
 ## What this pack will not do
 
@@ -40,6 +41,18 @@ No. It scores the draft. You send it from your own sequencer.
 ## What fails the score?
 
 Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
+
+The scorer also fails email one that asks for a meeting, that never states the finding, or that runs past 120 words. Each failure names the phrase that tripped it and the fix.
+
+## Layout
+
+```
+.claude-plugin/plugin.json      plugin manifest
+skills/cold-offer/SKILL.md      the skill the agent loads
+skills/cold-offer/scripts/      score.py
+skills/cold-offer/examples/     good and sell drafts
+tests/                          python3 -m unittest discover -s tests
+```
 
 ## On the site
 
