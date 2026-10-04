@@ -6,65 +6,61 @@ before you contribute.
 ## What kinds of contributions land
 
 - **Bug reports** — open an issue with a reproducible case. The
-  scripts in `scripts/` are deterministic, so bugs there are usually
-  one-line fixes.
-- **New sub-skills** that extend the existing framework. Discuss in
-  an issue first if it's a substantial addition.
-- **Calibration improvements** to the scoring scripts — if you can
-  show a case where the script scores wrong, that's gold.
-- **Cross-runtime ports** (Cursor, Gemini CLI, Codex) — see the
-  `Cross-runtime` section of the README.
-- **Translation** of the framework reference docs.
+  scorer in `skills/cold-offer/scripts/` is deterministic, so bugs
+  there are usually one-line fixes.
+- **Calibration cases** — a draft the scorer passes that sells or asks
+  for a meeting, or a clean draft it fails. Paste the draft and the
+  output. That's gold.
+- **Cross-runtime ports** (Cursor, Gemini CLI, Codex) — discuss in an
+  issue first.
 
 ## What doesn't land
 
-- Renaming the JMC framework concepts (Signal → Pain → EVP → Ask, the
-  5 Schwartz tiers, the 4 content pillars) — these are course-anchored.
-- Adding LLM calls inside the skills. The whole point is that the
-  skills are deterministic.
-- Adding paid-API dependencies to scripts. Scripts must work zero-dep.
-- Renaming `claude-*` → `<other-runtime>-*`. We ship per-runtime ports
-  as separate plugins instead.
+- Renaming the three parts (leak, prototype, email one) or letting
+  email one sell the paid product.
+- Adding LLM calls to the scorer. The whole point is that it is
+  deterministic.
+- Adding dependencies or paid APIs. The scorer is Python 3 standard
+  library only.
+- Code that sends email or books meetings.
 
-## Development setup
+## Layout
+
+```
+.claude-plugin/plugin.json           plugin manifest
+skills/cold-offer/SKILL.md           the skill
+skills/cold-offer/scripts/score.py   the scorer
+skills/cold-offer/examples/          good and sell drafts
+tests/test_score.py                  unit tests
+```
+
+## Development
 
 ```bash
 git clone https://github.com/cmj-hub/claude-sales-offer.git
 cd claude-sales-offer
-# Test the install locally
-./install.sh   # or install.ps1 on Windows
-```
-
-For Python scripts:
-
-```bash
-# All scripts are zero-dep Python 3.8+ — just run them
-python3 scripts/<script>.py --help
+python3 -m unittest discover -s tests -v
+python3 skills/cold-offer/scripts/score.py --file skills/cold-offer/examples/offer-good.json
 ```
 
 ## Pull-request checklist
 
-- [ ] Skill names follow the spec (lowercase, hyphens, ≤64 chars,
-      directory matches `name:` in frontmatter)
-- [ ] Sub-skill descriptions include trigger phrases inline
-- [ ] If you touch a script, smoke-test it and paste output in the PR
-- [ ] If you add a new sub-skill, list it in the README catalog table
-- [ ] CHANGELOG.md updated
-- [ ] No new dependencies (any of: pip packages, npm packages, API
-      keys, paid services)
+- [ ] `python3 -m unittest discover -s tests` passes
+- [ ] A scorer change comes with a test for the case it fixes
+- [ ] If you change a check, update the table in `SKILL.md`
+- [ ] Skill name stays lowercase with hyphens and matches its directory
+- [ ] Bump `version` in `.claude-plugin/plugin.json`
+- [ ] No new dependencies (pip packages, npm packages, API keys, paid
+      services)
 
-## Reporting calibration issues with scoring scripts
+## Reporting calibration issues
 
-If a script (`spam_word_lint.py` / `score_psp.py` / `score_evp.py` /
-`score_post.py`) scores something obviously wrong:
+If `score.py` scores something obviously wrong:
 
-1. Paste the input that produced the wrong score
-2. State your expected score + actual score
-3. Note which axis is mis-calibrated
-
-The scripts are calibrated against ~1,000 real B2B campaigns. New
-calibration cases add to the lexicons in version-controlled JSON, not
-to the script logic — keep the deterministic path stable.
+1. Paste the draft JSON that produced the wrong result
+2. Paste the output of `score.py --json`
+3. Name the check you think is wrong (`sells`, `meeting`, `complete`,
+   `finding`, `length`)
 
 ## License
 
