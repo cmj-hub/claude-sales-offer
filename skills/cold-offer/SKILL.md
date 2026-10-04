@@ -1,6 +1,7 @@
 ---
 name: cold-offer
-description: "Draft a give-first cold offer — a leak (one finding the buyer did not ask for), a prototype (a short trial of the fix), and email one that hands both over without selling. Use when the user asks for a cold email, first-touch outbound, a give-first or value-first opener, or a cold offer, and email one must not pitch the paid product or ask for a meeting. Scores the draft with a local script; never sends."
+description: "Draft a give-first cold offer: a leak (one finding the buyer did not ask for), a prototype (a short trial of the fix), and email one that hands both over without selling. Use when the user asks for a give-first or value-first first touch, a cold offer, or a first email that must not pitch the paid product or ask for a meeting. Not for a standard signal-anchored cold email or follow-up sequence (use cold-email). Scores the draft with a local script; never sends."
+models: ""
 ---
 
 # Cold offer
@@ -20,6 +21,8 @@ Ask for what is missing before drafting:
 - The buyer: company, and the public page or product to look at.
 - What the user sells, so the prototype is a slice of it and not the whole thing.
 
+If `brand-config.json` is at the project root, read it first. Take the pain from `psp.primary_pain` and write email one in `psp.vocabulary`. Take the outcome the prototype previews from `evp.outcome`, and keep it inside `evp.primary`. Use them as given; do not ask for them again. If a block is missing, say which pack produces it (`/plugin install psp@gtm-operator-skills`, `/plugin install evp@gtm-operator-skills`) and work from the page and the user's answers. Never invent the values.
+
 If the user gave a URL and the page can be read, find the leak there. Do not invent a finding the page does not show. If you cannot see the page, ask the user for the finding.
 
 ## Workflow
@@ -28,7 +31,7 @@ Copy this list and tick it in order.
 
 - [ ] 1. Choose one finding the buyer did not request. One, not a list.
 - [ ] 2. Fill the shell below: `leak`, `prototype`, `email_one`. Write it to a scratch file, not the user's repo.
-- [ ] 3. Run `python3 scripts/score.py --file draft.json --json` from this skill's directory.
+- [ ] 3. Run `python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file draft.json --json`.
 - [ ] 4. If it exits 1, apply each `fix` and go back to step 2. Repeat until it exits 0.
 - [ ] 5. Show the user the leak, the prototype, and email one. Do not send it.
 
@@ -48,6 +51,18 @@ The output names the phrase that tripped each check. A false positive (for examp
 
 A recruiter note that asks for coffee is a different letter. This pack does not write it.
 
+## Works with the suite
+
+This is step 5 of the GTM operator suite (`/plugin marketplace add cmj-hub/gtm-operator-skills`).
+
+- **Reads:** `psp` (pain, vocabulary) and `evp` (outcome, line) from `brand-config.json` if present.
+- **Writes:** nothing outside the draft. Never touches `brand-config.json`.
+- **Before this:** psp (`/psp:psp`) and evp (`/evp:evp`), when there is no `psp` or `evp` block; prospect-list (`/prospect-list:who-to-contact`), when you do not yet know who to send it to.
+- **Instead of this:** cold-email (`/cold-email:cold-email`), for a signal-anchored first touch with a binary ask and Day 3 / 7 / 14 follow-ups.
+- **After this:** landing-page (`/landing-page:page`) for the page the full report points to; pricing (`/pricing:pricing`) when they ask what the core service costs.
+
+If a companion pack is not installed, name it and its install line (`/plugin install <name>@gtm-operator-skills`); do not do its job inline.
+
 ## Shell
 
 ```json
@@ -61,8 +76,8 @@ A recruiter note that asks for coffee is a different letter. This pack does not 
 ## Examples
 
 ```bash
-python3 scripts/score.py --file examples/offer-good.json    # exits 0, prints the three parts
-python3 scripts/score.py --file examples/offer-sells.json   # exits 1, names "retainer", "book a demo"
+python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-good.json    # exits 0, prints the three parts
+python3 ${CLAUDE_SKILL_DIR}/scripts/score.py --file ${CLAUDE_SKILL_DIR}/examples/offer-sells.json   # exits 1, names "retainer", "book a demo"
 ```
 
 Python 3 standard library only. No network. No send.
