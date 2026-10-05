@@ -23,6 +23,8 @@ python3 skills/cold-offer/scripts/score.py --file skills/cold-offer/examples/off
 
 Part of the GTM operator suite — `/plugin install gtm@gtm-operator-skills` installs all ten.
 
+Add the [gtm-operator mod](https://github.com/cmj-hub/gtm-operator-claude-mod) to see the suite's next step above your prompt and keep `brand-config.json` from being overwritten: `/plugin install gtm-operator@gtm-operator-skills`.
+
 The sample homepage asks for a meeting before it shows any work.
 
 The good first email hands over that finding. The draft that says "buy the retainer" fails the score.
