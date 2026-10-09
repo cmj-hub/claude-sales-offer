@@ -63,6 +63,12 @@ The good draft exits 0 and prints the leak, the prototype, email one, and the ne
 
 It will not send the email. It does not book a meeting. It will not let email one sell the paid product.
 
+## The data step this pack leaves to you
+
+This pack scores the leak, the prototype, and email one. Person-level enrichment for the recipient sits outside the pack.
+
+Run [Enrich a person](https://thegtmdirectory.com/jobs/enrich-a-person) on The Growth Desk when you need a verified work identity before you send. A found address is not sendable until verify returns deliverable.
+
 ## Does this send the offer?
 
 No. It scores the draft. You send it from your own sequencer.
