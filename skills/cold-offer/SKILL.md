@@ -48,6 +48,10 @@ Copy this list and tick it in order.
 - [ ] 4. If it exits 1, apply each `fix` and go back to step 2. Repeat until it exits 0.
 - [ ] 5. Show the user the leak, the prototype, and email one. Do not send it. End with `Next: /landing-page:page` (or `/pricing:pricing` when they ask what the core service costs).
 
+## Banned: found is not sendable
+
+A found email is not sendable until verify returns deliverable. Catch-all and unknown stay off the send list. This pack scores the offer; verification is a separate step before any send.
+
 Exit codes: `0` pass, `1` a check failed, `2` bad input (missing file, broken JSON, not an object). Bad input never echoes the raw draft.
 
 ## What the scorer checks
