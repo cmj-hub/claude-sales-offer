@@ -2,7 +2,7 @@
 name: cold-offer
 description: "Draft a give-first cold offer: a leak (one finding the buyer did not ask for), a prototype (a short trial of the fix), and email one that hands both over without selling. Use when the user asks for a give-first or value-first first touch, a cold offer, or a first email that must not pitch the paid product or ask for a meeting. Not for a standard signal-anchored cold email or follow-up sequence (use cold-email). Scores the draft with a local script; never sends."
 argument-hint: "[buyer company or public URL | score]"
-allowed-tools: Read Write Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/score.py:*)
+allowed-tools: Read Write(./gtm/**) Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/score.py:*)
 models: ""
 ---
 
