@@ -39,7 +39,7 @@ The scorer is Python in this repo. It does not call a paid API. Host paths are o
 
 ## Install
 
-Claude Code: the two lines above. The command is `/sales-offer:cold-offer`; `/sales-offer:cold-offer score` scores the draft already in `gtm/offer.json`.
+Claude Code: the two lines above. The command is `/sales-offer:cold-offer`; `/sales-offer:cold-offer full` writes the full offer (what they get, proof, price, why now, one first step); `/sales-offer:cold-offer score` scores the draft already in `gtm/offer.json`.
 
 Other agents:
 
@@ -78,6 +78,8 @@ No. It scores the draft. You send it from your own sequencer.
 Email one that sells the paid product. The first email delivers the finding. The paid product stays behind a yes.
 
 The scorer also fails email one that asks for a meeting, that never states the finding, or that runs past 120 words. A leak or prototype that sells the paid product fails too. Optional `scope` must name one deliverable, and optional `deadline` must be a real `YYYY-MM-DD` date (not before `--today`, when given). Each failure names the phrase that tripped it and the fix.
+
+The full offer (`--mode full`) fails when the price has no number, why now names no dated signal, the first step is more than one action, or the offer adds a guarantee, discount, trial or number the facts do not hold.
 
 ## Layout
 
