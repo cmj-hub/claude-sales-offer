@@ -71,7 +71,7 @@ ATTACH_RE = re.compile(r"\b(?:attached|attachment|enclosed)\b", re.IGNORECASE)
 # Full mode.
 FULL_FIELDS = ("what_they_get", "price", "why_now", "first_step")
 FULL_OPTIONAL = ("proof", "caveat")
-MAX_FULL_WORDS = 300
+MAX_FULL_WORDS = 400
 MAX_STEP_WORDS = 40
 PRICE_NUMBER_RE = re.compile(r"\d")
 MONTHS = r"jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec"
