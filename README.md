@@ -47,6 +47,23 @@ Other agents:
 npx skills add cmj-hub/claude-sales-offer --all -g --full-depth
 ```
 
+### From npm
+
+The same pack is on npm as [`@jmc-gtm/claude-sales-offer`](https://www.npmjs.com/package/@jmc-gtm/claude-sales-offer), released from this repo's version tags with npm provenance. It has no dependencies and no install scripts.
+
+In a project, for any agent host the skills installer knows (`experimental_sync` is still marked experimental there):
+
+```bash
+npm install -D @jmc-gtm/claude-sales-offer
+npx skills experimental_sync -a claude-code -y
+```
+
+In your own Claude Code plugin marketplace, point an entry at the package:
+
+```json
+{ "name": "sales-offer", "source": { "source": "npm", "package": "@jmc-gtm/claude-sales-offer" } }
+```
+
 ## What you walk out with in 15 minutes
 
 Artifact: `skills/cold-offer/examples/offer-good.json`.
