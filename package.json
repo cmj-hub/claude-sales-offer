@@ -1,0 +1,37 @@
+{
+  "name": "@jmc-gtm/claude-sales-offer",
+  "version": "0.7.0",
+  "description": "A sales offer is what the buyer gets, what it costs, and why now.",
+  "license": "MIT",
+  "author": "JMC Go-to-Market Systems",
+  "homepage": "https://github.com/cmj-hub/claude-sales-offer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmj-hub/claude-sales-offer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cmj-hub/claude-sales-offer/issues"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "claude-plugin",
+    "sales",
+    "cold-email",
+    "outbound",
+    "offer",
+    "give-first",
+    "b2b-sales"
+  ],
+  "files": [
+    ".claude-plugin",
+    "skills",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
